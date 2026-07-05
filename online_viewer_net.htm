@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- UTM capture: store params from URL into sessionStorage + localStorage so they
+     persist across the funnel and survive into the Calendly embed at the end. -->
+<script>
+(function() {
+  var keys = ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","gclid","fbclid"];
+  var params = new URLSearchParams(window.location.search);
+  keys.forEach(function(k) {
+    var v = params.get(k);
+    if (v) {
+      try {
+        sessionStorage.setItem("nmc_" + k, v);
+        localStorage.setItem("nmc_" + k, v);
+      } catch (e) {}
+    }
+  });
+})();
+</script>
+
+<title>Black Book Studio: In-House Affiliate &amp; Content Engine for 7-Figure Brands</title>
+<meta name="description" content="NAMZI is your in-house affiliate and content engine. We partner with ambitious brands to build 6 and 7-figure TikTok Shop programs. Creator content, affiliate recruitment, paid social, and influencer campaigns, all under one roof." />
+
+<!-- ========== REPLACE LATER ==========
+  CALENDLY_URL: Replace every instance of "#book-a-call" below with your Cal.com / Calendly booking link.
+  LOGO: The NAMZI mandala icon is rendered inline as SVG (uses currentColor, so it inherits text color).
+  CLIENT LOGOS: juniper-ridge.avif is already present. Other brand logos render
+       as text wordmarks via the JS fallback unless a matching PNG is dropped here.
+  STATS: Update the aggregate numbers in the #results section with your real figures.
+  TESTIMONIALS: Replace the placeholder quotes in #testimonials with real ones.
+  CASE STUDIES: Omic / 8-North / Halara metrics are pulled from the screenshots you provided.
+===================================== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --bg-2: #111111;
+    --surface: #141414;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    --text: #F5F5F0;
+    --text-dim: rgba(245, 245, 240, 0.62);
+    --text-mute: rgba(245, 245, 240, 0.45);
+    --accent: #D4FF3D;
+    --accent-ink: #0A0A0A;
+    --radius: 16px;
+    --radius-lg: 28px;
+    --maxw: 1280px;
+    --ease: cubic-bezier(.2,.7,.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  h1, h2, h3, h4 {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+  h1 { font-size: clamp(2.5rem, 7vw, 6.5rem); font-weight: 700; }
+  h2 { font-size: clamp(2rem, 5vw, 4.25rem); }
+  h3 { font-size: clamp(1.25rem, 2.2vw, 1.75rem); font-weight: 600; }
+  p  { color: var(--text-dim); }
+
+  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text);
+    padding: 6px 12px; border: 1px solid var(--border-strong);
+    border-radius: 999px; background: rgba(255,255,255,0.03);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .eyebrow::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 10px var(--accent);
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 24px; border-radius: 999px;
+    font-weight: 500; font-size: 15px; letter-spacing: -0.01em;
+    transition: transform .2s var(--ease), background .2s var(--ease), color .2s var(--ease);
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { background: #E4FF66; }
+  .btn-ghost {
+    color: var(--text); border-color: var(--border-strong); background: transparent;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.35); }
+  .btn svg { width: 18px; height: 18px; }
+
+  /* NAV */
+  nav.site { position: fixed; top: 16px; left: 0; right: 0; z-index: 100; }
+  nav.site .bar {
+    max-width: var(--maxw); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  nav.site .logo {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    letter-spacing: -0.02em; font-size: 20px;
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--text);
+  }
+  nav.site .logo .logo-mark { width: 30px; height: 30px; color: var(--text); flex-shrink: 0; }
+  nav.site .logo .wordmark { line-height: 1; }
+  nav.site .links { display: flex; gap: 28px; }
+  nav.site .links a {
+    font-size: 14px; color: var(--text-dim); font-weight: 500;
+    transition: color .2s var(--ease);
+  }
+  nav.site .links a:hover { color: var(--text); }
+  nav.site .cta-wrap { display: flex; align-items: center; gap: 10px; }
+  .menu-toggle { display: none; background: none; border: 0; color: var(--text); padding: 8px; cursor: pointer; }
+
+  @media (max-width: 980px) {
+    nav.site .links { display: none; }
+    nav.site .links.open {
+      display: flex; flex-direction: column; gap: 8px;
+      position: absolute; top: calc(100% + 10px); left: 16px; right: 16px;
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: 18px; padding: 18px;
+    }
+    nav.site .cta-wrap .btn-ghost { display: none; }
+    .menu-toggle { display: inline-flex; }
+  }
+
+  /* HERO */
+  section.hero { padding: 180px 0 80px; position: relative; overflow: hidden; }
+  section.hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(1000px 500px at 20% 0%, rgba(212, 255, 61, 0.10), transparent 70%),
+      radial-gradient(800px 400px at 80% 20%, rgba(212, 255, 61, 0.06), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1.15fr 1fr;
+    gap: 64px; align-items: center;
+  }
+  .hero-text { min-width: 0; }
+  .hero h1 { max-width: 15ch; }
+  .hero h1 .accent { color: var(--accent); font-style: italic; font-weight: 500; }
+  .hero .sub {
+    max-width: 56ch; margin-top: 28px; font-size: clamp(1rem, 1.5vw, 1.25rem);
+    color: var(--text-dim);
+  }
+  .hero .cta-row { margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-meta {
+    margin-top: 56px;
+    display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+    color: var(--text-mute); font-size: 13px;
+  }
+  .hero-meta .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+  .hero-meta .stars { color: var(--accent); letter-spacing: 2px; }
+
+  /* HERO VIDEO STACK */
+  .hero-stack {
+    position: relative;
+    height: 540px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-stack .vid-card {
+    position: absolute;
+    width: 220px; aspect-ratio: 9 / 16;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    box-shadow:
+      0 30px 60px -16px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(255,255,255,0.04) inset;
+    background: #111;
+    will-change: transform;
+  }
+  .hero-stack .vid-card video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .hero-stack .vid-1 { z-index: 1; animation: float-a 7s ease-in-out infinite; }
+  .hero-stack .vid-2 { z-index: 2; animation: float-b 8s ease-in-out infinite; }
+  .hero-stack .vid-3 { z-index: 3; animation: float-c 9s ease-in-out infinite; }
+  @keyframes float-a {
+    0%, 100% { transform: rotate(-9deg) translate(-100px, -8px); }
+    50%      { transform: rotate(-9deg) translate(-100px, -22px); }
+  }
+  @keyframes float-b {
+    0%, 100% { transform: rotate(2deg) translate(0, 0); }
+    50%      { transform: rotate(2deg) translate(0, -14px); }
+  }
+  @keyframes float-c {
+    0%, 100% { transform: rotate(7deg) translate(100px, 18px); }
+    50%      { transform: rotate(7deg) translate(100px, 4px); }
+  }
+  .hero-stack .stack-badge {
+    position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: 999px; padding: 8px 14px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-mute); white-space: nowrap;
+    z-index: 10;
+  }
+  .hero-stack .stack-badge .pulse {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 10px var(--accent);
+    margin-right: 8px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  @media (max-width: 1100px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 56px; }
+    .hero-stack { height: 460px; }
+    .hero-stack .vid-card { width: 180px; }
+    @keyframes float-a { 0%, 100% { transform: rotate(-9deg) translate(-80px, -8px); } 50% { transform: rotate(-9deg) translate(-80px, -22px); } }
+    @keyframes float-c { 0%, 100% { transform: rotate(7deg) translate(80px, 18px); } 50% { transform: rotate(7deg) translate(80px, 4px); } }
+  }
+  @media (max-width: 600px) {
+    .hero-stack { height: 380px; }
+    .hero-stack .vid-card { width: 140px; border-radius: 18px; }
+    @keyframes float-a { 0%, 100% { transform: rotate(-9deg) translate(-60px, -8px); } 50% { transform: rotate(-9deg) translate(-60px, -18px); } }
+    @keyframes float-c { 0%, 100% { transform: rotate(7deg) translate(60px, 14px); } 50% { transform: rotate(7deg) translate(60px, 2px); } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-stack .vid-card { animation: none; }
+  }
+
+  /* MARQUEE (keywords) */
+  .marquee {
+    overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 28px 0; background: var(--bg-2);
+  }
+  .marquee-track {
+    display: flex; gap: 64px; white-space: nowrap;
+    animation: scroll 40s linear infinite;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 3vw, 34px);
+    letter-spacing: -0.02em;
+    color: var(--text-mute);
+    font-weight: 500;
+  }
+  .marquee-track span.highlight { color: var(--text); }
+  .marquee-track .sep { color: var(--accent); }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* GENERIC SECTION */
+  section { padding: 120px 0; position: relative; }
+  .section-head { max-width: 56ch; margin-bottom: 64px; }
+  .section-head .eyebrow { margin-bottom: 20px; }
+  .section-head p { margin-top: 18px; font-size: 1.05rem; }
+
+  /* RESULTS STATS */
+  #results .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 36px 28px; min-height: 220px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: border-color .3s var(--ease), transform .3s var(--ease);
+  }
+  .stat-card:hover { border-color: var(--border-strong); transform: translateY(-4px); }
+  .stat-card .num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 600; letter-spacing: -0.03em; line-height: 1;
+  }
+  .stat-card .num .unit { color: var(--accent); }
+  .stat-card .label { font-size: 14px; color: var(--text-dim); }
+  @media (max-width: 960px) { #results .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* SERVICES */
+  #services .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .service {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 40px; position: relative; overflow: hidden;
+    transition: border-color .3s var(--ease);
+  }
+  .service:hover { border-color: var(--border-strong); }
+  .service .num {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--accent); font-size: 14px; letter-spacing: 0.1em;
+    font-weight: 500; margin-bottom: 24px;
+  }
+  .service h3 { margin-bottom: 14px; }
+  .service p { color: var(--text-dim); max-width: 44ch; }
+  .service ul { margin-top: 22px; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .service ul li {
+    font-size: 13px; padding: 6px 12px; border-radius: 999px;
+    background: rgba(212, 255, 61, 0.08); color: var(--accent);
+    border: 1px solid rgba(212, 255, 61, 0.25);
+  }
+  @media (max-width: 860px) { #services .grid { grid-template-columns: 1fr; } }
+
+  /* PROCESS */
+  #process .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { padding: 32px 24px; border-left: 1px solid var(--border); position: relative; }
+  .step:first-child { border-left: 0; padding-left: 0; }
+  .step .k {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--accent); font-size: 14px; font-weight: 500;
+    margin-bottom: 20px; letter-spacing: 0.05em;
+  }
+  .step h3 { margin-bottom: 12px; font-size: 1.35rem; }
+  .step p { font-size: 14.5px; }
+  @media (max-width: 960px) {
+    #process .steps { grid-template-columns: repeat(2, 1fr); }
+    .step:nth-child(3) { border-left: 0; padding-left: 0; }
+  }
+  @media (max-width: 600px) {
+    #process .steps { grid-template-columns: 1fr; }
+    .step { border-left: 0; border-top: 1px solid var(--border); padding: 28px 0 0; }
+    .step:first-child { border-top: 0; padding-top: 0; }
+  }
+
+  /* TESTIMONIALS */
+  #testimonials .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .quote {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 36px;
+    display: flex; flex-direction: column; gap: 28px; min-height: 320px;
+  }
+  .quote .mark {
+    color: var(--accent); font-family: 'Space Grotesk', sans-serif;
+    font-size: 60px; line-height: 0.6; font-weight: 700;
+  }
+  .quote p { color: var(--text); font-size: 1.05rem; line-height: 1.5; flex-grow: 1; }
+  .quote .who { display: flex; align-items: center; gap: 14px; }
+  .quote .avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #7DFF3D);
+    color: var(--accent-ink);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    display: grid; place-items: center; font-size: 16px;
+  }
+  .quote .name { font-weight: 600; font-size: 15px; }
+  .quote .role { font-size: 13px; color: var(--text-mute); }
+  @media (max-width: 960px) { #testimonials .grid { grid-template-columns: 1fr; } }
+
+  /* BOOK A CALL (brand-side) */
+  #book-a-call { padding: 100px 0 120px; }
+  #book-a-call .booking-wrap {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start;
+  }
+  #book-a-call .booking-left h2 { max-width: 18ch; margin-top: 18px; margin-bottom: 18px; }
+  #book-a-call .booking-left h2 .accent { color: var(--accent); font-style: italic; font-weight: 500; }
+  #book-a-call .booking-left p { font-size: 1.02rem; }
+  #book-a-call .booking-bullets {
+    list-style: none; display: flex; flex-direction: column; gap: 14px; margin-top: 28px;
+  }
+  #book-a-call .booking-bullets li {
+    font-size: 14.5px; color: var(--text-dim);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  #book-a-call .booking-bullets li::before {
+    content: ""; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0; margin-top: 1px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A0A0A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: center; background-size: 12px;
+  }
+  @media (max-width: 1000px) {
+    #book-a-call .booking-wrap { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 56px 0 40px; background: var(--bg-2); }
+  footer .cols {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px; margin-bottom: 48px;
+  }
+  footer h4 {
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-mute); margin-bottom: 16px; font-weight: 500;
+  }
+  footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  footer a { color: var(--text-dim); font-size: 14px; transition: color .2s var(--ease); }
+  footer a:hover { color: var(--text); }
+  footer .brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 24px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 12px;
+    color: var(--text);
+  }
+  footer .brand .logo-mark { width: 36px; height: 36px; color: var(--text); flex-shrink: 0; }
+  footer .brand .wordmark { line-height: 1; }
+  footer .brand-blurb { color: var(--text-dim); font-size: 14px; max-width: 40ch; }
+  footer .bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--text-mute);
+    flex-wrap: wrap; gap: 16px;
+  }
+  @media (max-width: 860px) { footer .cols { grid-template-columns: 1fr 1fr; } }
+
+  /* CLIENT LOGO STRIP */
+  .logo-strip {
+    overflow: hidden; padding: 40px 0;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .logo-strip .title {
+    text-align: center; color: var(--text-mute);
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 28px;
+  }
+  .logo-row {
+    display: flex; gap: 64px; white-space: nowrap; align-items: center;
+    animation: scroll 75s linear infinite;
+  }
+  .logo-row .brand-logo {
+    height: 38px; width: auto; max-width: 180px; flex-shrink: 0;
+    object-fit: contain;
+    /* Force every logo to a unified white tone, regardless of source color. */
+    filter: brightness(0) invert(1);
+    opacity: 0.55;
+    transition: opacity .25s var(--ease);
+  }
+  .logo-row .brand-logo:hover { opacity: 1; }
+  /* Text-wordmark fallback: shown when no image file is present. Looks unified with image logos. */
+  .logo-row .brand-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    opacity: 0.55;
+    white-space: nowrap;
+    line-height: 1;
+    transition: opacity .25s var(--ease);
+    flex-shrink: 0;
+  }
+  .logo-row .brand-text.brand-lower { text-transform: none; letter-spacing: -0.01em; }
+  .logo-row .brand-text:hover { opacity: 1; }
+
+  /* CASE STUDIES */
+  #case-studies .cases { display: flex; flex-direction: column; gap: 16px; }
+  .case {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 44px 48px;
+    transition: border-color .3s var(--ease), transform .3s var(--ease);
+  }
+  .case:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .case-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--text-mute);
+    text-transform: uppercase; letter-spacing: 0.14em; font-weight: 500;
+    margin-bottom: 28px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .case-num { color: var(--accent); font-family: 'Space Grotesk', sans-serif; }
+  .case-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.9rem, 3.6vw, 2.75rem);
+    font-weight: 600; letter-spacing: -0.02em; line-height: 1;
+    margin-bottom: 14px;
+  }
+  .case-result {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+    font-weight: 500; line-height: 1.2;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .case-result .from { color: var(--text-mute); }
+  .case-result .arrow { color: var(--accent); width: 28px; height: 28px; flex-shrink: 0; }
+  .case-result .to { color: var(--accent); font-weight: 600; }
+  .case-metrics {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    padding-top: 32px; border-top: 1px solid var(--border);
+  }
+  .case-metrics.cols-6 { grid-template-columns: repeat(6, 1fr); }
+  .case-metrics .m .label {
+    font-size: 11px; color: var(--text-mute);
+    text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .case-metrics .m .value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+    font-weight: 600; letter-spacing: -0.01em; line-height: 1;
+    margin-bottom: 8px; color: var(--text);
+  }
+  .case-metrics .m .delta {
+    color: var(--accent); font-size: 12.5px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  @media (max-width: 1000px) {
+    .case { padding: 32px 28px; }
+    .case-metrics, .case-metrics.cols-6 { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .case-metrics, .case-metrics.cols-6 { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  }
+
+  /* 6 7 MEME BOUNCE */
+  .bounce-digit {
+    display: inline-block;
+    transform-origin: 50% 100%;
+    will-change: transform;
+  }
+  .bounce-digit.is-bouncing { animation: meme67 0.95s cubic-bezier(.2,.7,.2,1.2); }
+  .bounce-seven.is-bouncing { animation-delay: 0.13s; }
+  @keyframes meme67 {
+    0%   { transform: translateY(0)    rotate(0deg); }
+    15%  { transform: translateY(-4px) rotate(-3deg); }
+    32%  { transform: translateY(-22px) rotate(2deg); }
+    50%  { transform: translateY(0)    rotate(-1deg); }
+    62%  { transform: translateY(-7px) rotate(1deg); }
+    78%  { transform: translateY(0)    rotate(0deg); }
+    100% { transform: translateY(0)    rotate(0deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bounce-digit.is-bouncing { animation: none; }
+  }
+
+  /* RECENT WORK (video grid) */
+  #work .work-row {
+    display: flex; gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 8px 0 24px;
+    margin: 0 -24px;
+    padding-left: 24px; padding-right: 24px;
+    scrollbar-width: thin; scrollbar-color: var(--border-strong) var(--bg-2);
+  }
+  #work .work-row::-webkit-scrollbar { height: 6px; }
+  #work .work-row::-webkit-scrollbar-track { background: var(--bg-2); border-radius: 4px; }
+  #work .work-row::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+  .work-card { flex-shrink: 0; width: 280px; scroll-snap-align: start; }
+  .work-card .vid-wrap {
+    position: relative; width: 100%; aspect-ratio: 9 / 16;
+    background: #111; border-radius: var(--radius-lg); overflow: hidden;
+    border: 1px solid var(--border);
+    transition: border-color .25s var(--ease), transform .25s var(--ease);
+  }
+  .work-card:hover .vid-wrap { border-color: var(--border-strong); transform: translateY(-2px); }
+  .work-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-card .unmute-btn {
+    position: absolute; bottom: 12px; right: 12px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid var(--border-strong);
+    color: var(--text); cursor: pointer;
+    display: grid; place-items: center;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .work-card .unmute-btn:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .work-card .unmute-btn svg { width: 18px; height: 18px; }
+  .work-card .unmute-btn .icon-on { display: none; }
+  .work-card .unmute-btn.live .icon-off { display: none; }
+  .work-card .unmute-btn.live .icon-on { display: block; }
+  .work-card .label {
+    margin-top: 14px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px;
+  }
+  .work-card .creator {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 15px; color: var(--text);
+  }
+  .work-card .brand {
+    font-size: 11px; color: var(--text-mute);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  @media (max-width: 600px) { .work-card { width: 240px; } }
+
+  /* Scroll reveal disabled — all content visible by default.
+     (Previous opacity:0 was causing some browsers/extensions to keep content hidden.) */
+  [data-reveal] { opacity: 1; transform: none; }
+</style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '835528996034860');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=835528996034860&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code --></head>
+<body>
+
+<!-- NAV -->
+<nav class="site">
+  <div class="bar">
+    <a href="#top" class="logo" aria-label="NAMZI">
+      <svg class="logo-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <polygon points="100,22 155,45 178,100 155,155 100,178 45,155 22,100 45,45"/>
+          <polygon points="100,60 128,72 140,100 128,128 100,140 72,128 60,100 72,72"/>
+          <line x1="100" y1="22" x2="100" y2="60"/><line x1="155" y1="45" x2="128" y2="72"/>
+          <line x1="178" y1="100" x2="140" y2="100"/><line x1="155" y1="155" x2="128" y2="128"/>
+          <line x1="100" y1="178" x2="100" y2="140"/><line x1="45" y1="155" x2="72" y2="128"/>
+          <line x1="22" y1="100" x2="60" y2="100"/><line x1="45" y1="45" x2="72" y2="72"/>
+        </g>
+        <g fill="currentColor">
+          <circle cx="100" cy="22" r="7"/><circle cx="155" cy="45" r="7"/><circle cx="178" cy="100" r="7"/><circle cx="155" cy="155" r="7"/>
+          <circle cx="100" cy="178" r="7"/><circle cx="45" cy="155" r="7"/><circle cx="22" cy="100" r="7"/><circle cx="45" cy="45" r="7"/>
+          <circle cx="100" cy="60" r="4.5"/><circle cx="128" cy="72" r="4.5"/><circle cx="140" cy="100" r="4.5"/><circle cx="128" cy="128" r="4.5"/>
+          <circle cx="100" cy="140" r="4.5"/><circle cx="72" cy="128" r="4.5"/><circle cx="60" cy="100" r="4.5"/><circle cx="72" cy="72" r="4.5"/>
+          <circle cx="100" cy="92" r="7"/>
+          <path d="M 82,120 C 82,107 90,102 100,102 C 110,102 118,107 118,120 Z"/>
+        </g>
+      </svg>
+      <span class="wordmark">NAMZI</span>
+    </a>
+    <div class="links" id="nav-links">
+      <a href="#services">Services</a>
+      <a href="#case-studies">Case Studies</a>
+      <a href="#work">Recent Work</a>
+      <a href="#results">Results</a>
+      <a href="#process">Process</a>
+      <a href='/creators'>For Creators</a>
+    </div>
+    <div class="cta-wrap">
+      <a href="#book-a-call" class="btn btn-ghost">Book a call</a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow">Affiliate &amp; Content Engine</span>
+      <h1 style="margin-top: 24px;">
+        Your <span class="accent"><span class="bounce-digit bounce-six">6</span> &amp; <span class="bounce-digit bounce-seven">7</span>-figure</span> affiliate and content engine, built in-house.
+      </h1>
+      <p class="sub">
+        We're a growth partner, not an agency. Our in-house team runs the full affiliate engine for ambitious brands: creator recruitment, UGC, paid social, and influencer campaigns. All under one roof, owned end-to-end.
+      </p>
+      <div class="cta-row">
+        <a href="#book-a-call" class="btn btn-primary">
+          Book a discovery call
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <a class='btn btn-ghost' href='/creators'>I'm a creator →</a>
+      </div>
+      <div class="hero-meta">
+        <span class="stars">★★★★★</span>
+        <span>Partnering with emerging &amp; 9-figure brands</span>
+        <span><span class="dot"></span> Now accepting Q2 partners</span>
+      </div>
+    </div>
+    <div class="hero-stack" aria-hidden="true">
+      <div class="vid-card vid-1">
+        <video src="videos/yayday-v2.mp4" muted loop playsinline autoplay preload="metadata"></video>
+      </div>
+      <div class="vid-card vid-2">
+        <video src="videos/omic.mp4" muted loop playsinline autoplay preload="metadata"></video>
+      </div>
+      <div class="vid-card vid-3">
+        <video src="videos/jawliner.mp4" muted loop playsinline autoplay preload="metadata"></video>
+      </div>
+      <span class="stack-badge"><span class="pulse"></span>2026 NAMZI Creator Challenge live!</span>
+    </div>
+  </div>
+</section>
+
+<!-- KEYWORD MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="highlight">TikTok Shop</span><span class="sep">●</span>
+    <span>UGC</span><span class="sep">●</span>
+    <span class="highlight">Affiliate Programs</span><span class="sep">●</span>
+    <span>Creator Campaigns</span><span class="sep">●</span>
+    <span class="highlight">Paid Social</span><span class="sep">●</span>
+    <span>7-Figure Launches</span><span class="sep">●</span>
+    <span class="highlight">TikTok Shop</span><span class="sep">●</span>
+    <span>UGC</span><span class="sep">●</span>
+    <span class="highlight">Affiliate Programs</span><span class="sep">●</span>
+    <span>Creator Campaigns</span><span class="sep">●</span>
+    <span class="highlight">Paid Social</span><span class="sep">●</span>
+    <span>7-Figure Launches</span><span class="sep">●</span>
+  </div>
+</div>
+
+<!-- CLIENT LOGO STRIP -->
+<!-- Each entry below is an <img> with a text-wordmark fallback (data-brand) shown if the
+     PNG isn't present. To use real logos: save a PNG into this folder with a matching
+     filename and the image will replace the text automatically. -->
+<div class="logo-strip">
+  <div class="title">Brands we've scaled</div>
+  <div class="logo-row" id="logo-row">
+    <span class="brand-text">PROMIX</span>
+    <span class="brand-text">JUNIPER RIDGE</span>
+    <span class="brand-text brand-lower">Jems</span>
+    <span class="brand-text">SQUATWOLF</span>
+    <span class="brand-text">C60 POWER</span>
+    <span class="brand-text brand-lower">Pulsetto</span>
+    <span class="brand-text brand-lower">kara beauty</span>
+    <span class="brand-text brand-lower">Rejuvna</span>
+    <span class="brand-text">YAY DAY</span>
+    <span class="brand-text brand-lower">Richwife</span>
+    <span class="brand-text">HENSON SHAVING</span>
+    <span class="brand-text brand-lower">Pickleball Kingdom</span>
+    <span class="brand-text brand-lower">miamily</span>
+    <span class="brand-text brand-lower">Omic Skincare</span>
+    <span class="brand-text brand-lower">PetPax</span>
+    <span class="brand-text brand-lower">Sagrada Bi</span>
+    <span class="brand-text brand-lower">One Shot</span>
+    <span class="brand-text brand-lower">Mykos</span>
+    <span class="brand-text brand-lower">Poured</span>
+    <span class="brand-text brand-lower">Miggy</span>
+    <span class="brand-text brand-lower">Postpartum Panty Party</span>
+    <!-- Duplicate set for seamless scroll loop: -->
+    <span class="brand-text">PROMIX</span>
+    <span class="brand-text">JUNIPER RIDGE</span>
+    <span class="brand-text brand-lower">Jems</span>
+    <span class="brand-text">SQUATWOLF</span>
+    <span class="brand-text">C60 POWER</span>
+    <span class="brand-text brand-lower">Pulsetto</span>
+    <span class="brand-text brand-lower">kara beauty</span>
+    <span class="brand-text brand-lower">Rejuvna</span>
+    <span class="brand-text">YAY DAY</span>
+    <span class="brand-text brand-lower">Richwife</span>
+    <span class="brand-text">HENSON SHAVING</span>
+    <span class="brand-text brand-lower">Pickleball Kingdom</span>
+    <span class="brand-text brand-lower">miamily</span>
+    <span class="brand-text brand-lower">Omic Skincare</span>
+    <span class="brand-text brand-lower">PetPax</span>
+    <span class="brand-text brand-lower">Sagrada Bi</span>
+    <span class="brand-text brand-lower">One Shot</span>
+    <span class="brand-text brand-lower">Mykos</span>
+    <span class="brand-text brand-lower">Poured</span>
+    <span class="brand-text brand-lower">Miggy</span>
+    <span class="brand-text brand-lower">Postpartum Panty Party</span>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">The Numbers</span>
+      <h2 style="margin-top: 20px;">Proof over promises.</h2>
+      <p>We're operators first. Every partner we take on is measured against real outcomes: GMV, views, new customers, and repeat revenue.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card" data-reveal>
+        <div class="num">$<span class="stat-n">10</span><span class="unit">M+</span></div>
+        <div class="label">GMV driven for brand partners</div>
+      </div>
+      <div class="stat-card" data-reveal>
+        <div class="num"><span class="stat-n">40</span><span class="unit">M+</span></div>
+        <div class="label">Combined creator following · 5,000+ vetted creators incl. Dillon Latham, Dalati Fitness</div>
+      </div>
+      <div class="stat-card" data-reveal>
+        <div class="num"><span class="stat-n">500</span><span class="unit">M+</span></div>
+        <div class="label">Organic views generated</div>
+      </div>
+      <div class="stat-card" data-reveal>
+        <div class="num"><span class="stat-n">40</span><span class="unit">+</span></div>
+        <div class="label">Brands scaled on TikTok Shop</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section id="case-studies">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Case Studies</span>
+      <h2 style="margin-top: 20px;">Real brands. Real TikTok Shop growth.</h2>
+      <p>Three programs we built and scaled inside our in-house affiliate engine.</p>
+    </div>
+
+    <div class="cases">
+
+      <!-- Case 01: Omic Skincare -->
+      <article class="case" data-reveal>
+        <div class="case-head">
+          <span class="case-num">Case 01</span>
+          <span>60 days · TikTok Shop</span>
+        </div>
+        <h3 class="case-brand">Omic Skincare</h3>
+        <p class="case-result">
+          <span class="from">$0/mo</span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+          <span class="to">$55K/mo</span>
+        </p>
+        <div class="case-metrics">
+          <div class="m"><div class="label">GMV</div><div class="value">$55,810</div><div class="delta">▲ 17.45%</div></div>
+          <div class="m"><div class="label">Orders</div><div class="value">772</div><div class="delta">▲ 22.54%</div></div>
+          <div class="m"><div class="label">Customers</div><div class="value">754</div><div class="delta">▲ 22.4%</div></div>
+          <div class="m"><div class="label">Items Sold</div><div class="value">815</div><div class="delta">▲ 21.64%</div></div>
+        </div>
+      </article>
+
+      <!-- Case 02: Juniper Ridge -->
+      <article class="case" data-reveal>
+        <div class="case-head">
+          <span class="case-num">Case 02</span>
+          <span>TikTok Shop · Coached Network</span>
+        </div>
+        <h3 class="case-brand">Juniper Ridge</h3>
+        <p class="case-result">
+          <span class="to">6.4X ROAS</span>
+          <span class="from">on paid spend, driven by our coached network creator content</span>
+        </p>
+        <div class="case-metrics">
+          <div class="m"><div class="label">Blended ROAS</div><div class="value">6.4X</div><div class="delta">▲ paid efficiency</div></div>
+          <div class="m"><div class="label">Engine</div><div class="value">Coached Network</div><div class="delta">Creator-led</div></div>
+          <div class="m"><div class="label">Format</div><div class="value">Short-form UGC</div><div class="delta">Native TikTok</div></div>
+          <div class="m"><div class="label">Stack</div><div class="value">Creator + Paid</div><div class="delta">Compounding</div></div>
+        </div>
+      </article>
+
+      <!-- Case 03: Halara -->
+      <article class="case" data-reveal>
+        <div class="case-head">
+          <span class="case-num">Case 03</span>
+          <span>28 days · TikTok Shop</span>
+        </div>
+        <h3 class="case-brand">Halara</h3>
+        <p class="case-result">
+          <span class="to">50% lift</span>
+          <span class="from">across every sales metric</span>
+        </p>
+        <div class="case-metrics cols-6">
+          <div class="m"><div class="label">Gross Sales</div><div class="value">£127,711</div><div class="delta">▲ 50.16%</div></div>
+          <div class="m"><div class="label">GMV</div><div class="value">£91,392</div><div class="delta">▲ 52.23%</div></div>
+          <div class="m"><div class="label">Total Orders</div><div class="value">3,799</div><div class="delta">▲ 50.81%</div></div>
+          <div class="m"><div class="label">Ordered SKUs</div><div class="value">3,799</div><div class="delta">▲ 50.81%</div></div>
+          <div class="m"><div class="label">Sold Quantity</div><div class="value">3,840</div><div class="delta">▲ 50.06%</div></div>
+          <div class="m"><div class="label">Buyers</div><div class="value">3,765</div><div class="delta">▲ 50.30%</div></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- RECENT WORK -->
+<section id="work">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Content Engine</span>
+      <h2 style="margin-top: 20px;">Recent work.</h2>
+      <p>A glimpse at creator content we've shipped for partner brands. Tap any video to unmute.</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="work-row">
+      <article class="work-card" data-reveal>
+        <div class="vid-wrap">
+          <video src="videos/yayday-v2.mp4" muted loop playsinline preload="metadata"></video>
+          <button class="unmute-btn" aria-label="Unmute">
+            <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          </button>
+        </div>
+        <div class="label"><span class="creator">@healthyemmie</span><span class="brand">YayDay</span></div>
+      </article>
+      <article class="work-card" data-reveal>
+        <div class="vid-wrap">
+          <video src="videos/omic.mp4" muted loop playsinline preload="metadata"></video>
+          <button class="unmute-btn" aria-label="Unmute">
+            <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          </button>
+        </div>
+        <div class="label"><span class="creator">Omic Skincare</span><span class="brand">Omic</span></div>
+      </article>
+      <article class="work-card" data-reveal>
+        <div class="vid-wrap">
+          <video src="videos/kevingalabay.mp4" muted loop playsinline preload="metadata"></video>
+          <button class="unmute-btn" aria-label="Unmute">
+            <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          </button>
+        </div>
+        <div class="label"><span class="creator">@kevingalabay</span><span class="brand">Creator</span></div>
+      </article>
+      <article class="work-card" data-reveal>
+        <div class="vid-wrap">
+          <video src="videos/nathanbaarss.mp4" muted loop playsinline preload="metadata"></video>
+          <button class="unmute-btn" aria-label="Unmute">
+            <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          </button>
+        </div>
+        <div class="label"><span class="creator">@nathanbaarss</span><span class="brand">Creator</span></div>
+      </article>
+      <article class="work-card" data-reveal>
+        <div class="vid-wrap">
+          <video src="videos/jawliner.mp4" muted loop playsinline preload="metadata"></video>
+          <button class="unmute-btn" aria-label="Unmute">
+            <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          </button>
+        </div>
+        <div class="label"><span class="creator">@jawliner</span><span class="brand">Creator</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">What We Do</span>
+      <h2 style="margin-top: 20px;">An end-to-end affiliate &amp; content engine, built for TikTok Shop.</h2>
+      <p>Most partners do one piece and outsource the rest. We built an in-house team that runs the whole engine, so your affiliates, creator content, and paid media all compound together instead of fighting each other.</p>
+    </div>
+    <div class="grid">
+      <div class="service" data-reveal>
+        <div class="num">01 / SERVICE</div>
+        <h3>TikTok Shop Growth</h3>
+        <p>We build, launch, and scale your TikTok Shop from zero, or take an existing shop to 6 and 7 figures in monthly GMV.</p>
+        <ul>
+          <li>Shop setup &amp; optimization</li>
+          <li>Affiliate recruitment</li>
+          <li>Live + VSL strategy</li>
+          <li>GMV reporting</li>
+        </ul>
+      </div>
+      <div class="service" data-reveal>
+        <div class="num">02 / SERVICE</div>
+        <h3>UGC &amp; Creator Content</h3>
+        <p>A constant flow of short-form, native creator content tailored to your offer. Concepts, briefs, sourcing, and production, all handled.</p>
+        <ul>
+          <li>Concept &amp; hook testing</li>
+          <li>Creator sourcing</li>
+          <li>Briefs &amp; revisions</li>
+          <li>Weekly content batches</li>
+        </ul>
+      </div>
+      <div class="service" data-reveal>
+        <div class="num">03 / SERVICE</div>
+        <h3>Paid Social Ads</h3>
+        <p>Winning creatives fed into high-performing ad accounts on TikTok, Meta, and YouTube, built around the content we produce for your shop.</p>
+        <ul>
+          <li>TikTok Ads Manager</li>
+          <li>Meta / Instagram</li>
+          <li>Spark Ads</li>
+          <li>Daily optimization</li>
+        </ul>
+      </div>
+      <div class="service" data-reveal>
+        <div class="num">04 / SERVICE</div>
+        <h3>Influencer &amp; Affiliate Campaigns</h3>
+        <p>Direct access to industry-leading creators including Dillon Latham and Dalati Fitness. A 5,000+ vetted network with 40M+ combined following, end-to-end campaign management, and an affiliate program engineered to compound every month.</p>
+        <ul>
+          <li>Creator outreach</li>
+          <li>Contracts &amp; gifting</li>
+          <li>Whitelisting</li>
+          <li>Performance tracking</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">How We Work</span>
+      <h2 style="margin-top: 20px;">Four steps from onboarding to seven figures.</h2>
+    </div>
+    <div class="steps">
+      <div class="step" data-reveal>
+        <div class="k">STEP 01</div>
+        <h3>Audit &amp; Strategy</h3>
+        <p>We dig into your brand, offer, margins, and current channel mix, then build a 90-day GMV roadmap.</p>
+      </div>
+      <div class="step" data-reveal>
+        <div class="k">STEP 02</div>
+        <h3>Creator Match</h3>
+        <p>We pull from our vetted network and recruit new creators aligned to your niche, margins, and positioning.</p>
+      </div>
+      <div class="step" data-reveal>
+        <div class="k">STEP 03</div>
+        <h3>Launch &amp; Scale</h3>
+        <p>Shop launches, content floods, ads go live. We compound winners across affiliates, UGC, and paid.</p>
+      </div>
+      <div class="step" data-reveal>
+        <div class="k">STEP 04</div>
+        <h3>Optimize &amp; Compound</h3>
+        <p>Weekly reporting, creator scorecards, and a growing affiliate program that doesn't need a bigger budget to grow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Partner Voices</span>
+      <h2 style="margin-top: 20px;">Real operators. Real GMV.</h2>
+    </div>
+    <div class="grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      <div class="quote" data-reveal>
+        <div class="mark">"</div>
+        <p>NAMZI took our TikTok Shop from a $30K/month side experiment to over $632K in GMV within our first 10 months together. Their in-house affiliate engine just compounds every week.</p>
+        <div class="who">
+          <div class="avatar">E</div>
+          <div><div class="name">Elias</div><div class="role">Founder, 8-North</div></div>
+        </div>
+      </div>
+      <div class="quote" data-reveal>
+        <div class="mark">"</div>
+        <p>We launched our TikTok Shop with NAMZI and went from $0 to $55K a month in 60 days. They handled creator recruitment, content, and the affiliate program end-to-end while we focused on product.</p>
+        <div class="who">
+          <div class="avatar">T</div>
+          <div><div class="name">Tiger</div><div class="role">Founder, Omic Skincare</div></div>
+        </div>
+      </div>
+      <div class="quote" data-reveal>
+        <div class="mark">"</div>
+        <p>The videos NAMZI produced performed unreal for us. We hit a 6.4X ROAS on paid spend and their creator content opened up a brand new audience we couldn't reach before.</p>
+        <div class="who">
+          <div class="avatar">JR</div>
+          <div><div class="name">Juniper Ridge</div><div class="role">Brand Partner</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK A CALL (Calendly embed) -->
+<section id="book-a-call">
+  <div class="container">
+    <div class="booking-wrap">
+      <div class="booking-left" data-reveal>
+        <span class="eyebrow">Free growth call</span>
+        <h2>Ready to turn on your <span class="accent">seven-figure</span> affiliate engine?</h2>
+        <p>We partner with a limited number of brands each quarter. Book a free 30-minute growth call below. We'll audit your current channels and map out what your in-house engine could look like.</p>
+        <ul class="booking-bullets">
+          <li>30 minutes, free, no pressure</li>
+          <li>We audit your current GMV and channel mix</li>
+          <li>You walk away with a custom 90-day roadmap</li>
+          <li>If we're not the right partner, we'll point you to who is</li>
+        </ul>
+      </div>
+      <div class="booking-right" data-reveal>
+        <!-- Calendly inline widget. Themed to match the dark + lime aesthetic. -->
+        <div class="calendly-inline-widget"
+             data-url="https://calendly.com/namzi/free-growth-call?hide_event_type_details=1&amp;hide_gdpr_banner=1&amp;background_color=141414&amp;text_color=F5F5F0&amp;primary_color=D4FF3D"
+             style="min-width:320px;height:720px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--surface);"></div>
+        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="cols">
+      <div>
+        <a href="#top" class="brand" aria-label="NAMZI">
+          <svg class="logo-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <polygon points="100,22 155,45 178,100 155,155 100,178 45,155 22,100 45,45"/>
+              <polygon points="100,60 128,72 140,100 128,128 100,140 72,128 60,100 72,72"/>
+              <line x1="100" y1="22" x2="100" y2="60"/><line x1="155" y1="45" x2="128" y2="72"/>
+              <line x1="178" y1="100" x2="140" y2="100"/><line x1="155" y1="155" x2="128" y2="128"/>
+              <line x1="100" y1="178" x2="100" y2="140"/><line x1="45" y1="155" x2="72" y2="128"/>
+              <line x1="22" y1="100" x2="60" y2="100"/><line x1="45" y1="45" x2="72" y2="72"/>
+            </g>
+            <g fill="currentColor">
+              <circle cx="100" cy="22" r="7"/><circle cx="155" cy="45" r="7"/><circle cx="178" cy="100" r="7"/><circle cx="155" cy="155" r="7"/>
+              <circle cx="100" cy="178" r="7"/><circle cx="45" cy="155" r="7"/><circle cx="22" cy="100" r="7"/><circle cx="45" cy="45" r="7"/>
+              <circle cx="100" cy="60" r="4.5"/><circle cx="128" cy="72" r="4.5"/><circle cx="140" cy="100" r="4.5"/><circle cx="128" cy="128" r="4.5"/>
+              <circle cx="100" cy="140" r="4.5"/><circle cx="72" cy="128" r="4.5"/><circle cx="60" cy="100" r="4.5"/><circle cx="72" cy="72" r="4.5"/>
+              <circle cx="100" cy="92" r="7"/>
+              <path d="M 82,120 C 82,107 90,102 100,102 C 110,102 118,107 118,120 Z"/>
+            </g>
+          </svg>
+          <span class="wordmark">NAMZI</span>
+        </a>
+        <p class="brand-blurb">Your in-house affiliate and content engine. We partner with ambitious brands to build 6 and 7-figure TikTok Shop programs, and with the creators who scale them.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">TikTok Shop</a></li>
+          <li><a href="#services">UGC Content</a></li>
+          <li><a href="#services">Paid Social</a></li>
+          <li><a href="#services">Influencer</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#case-studies">Case Studies</a></li>
+          <li><a href="#work">Recent Work</a></li>
+          <li><a href="#results">Results</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href='/creators'>For Creators</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:tristan@namzigrowing.com">tristan@namzigrowing.com</a></li>
+          <li><a href="#book-a-call">Book a call</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom">
+      <div>© 2026 NAMZI. All rights reserved.</div>
+      <div>Built for operators. Run by operators.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mark that JS is running so the data-reveal opacity:0 rule activates.
+  document.documentElement.classList.add('js');
+
+  // Safety net: if for any reason the IntersectionObserver doesn't fire (JS error,
+  // observer blocked, etc.), force every reveal element visible after 1.5s.
+  setTimeout(() => {
+    document.querySelectorAll('[data-reveal]:not(.in)').forEach(el => el.classList.add('in'));
+  }, 1500);
+
+  const menuToggle = document.getElementById('menu-toggle');
+  const navLinks = document.getElementById('nav-links');
+  menuToggle?.addEventListener('click', () => navLinks.classList.toggle('open'));
+
+  // Brand-logo fallback: if a PNG isn't on disk, swap in a styled text wordmark.
+  // Handles BOTH cases: image already failed to load by the time JS runs, OR fails later.
+  function applyBrandFallback(img) {
+    const span = document.createElement('span');
+    span.className = 'brand-text' + (img.dataset.case === 'lower' ? ' brand-lower' : '');
+    span.textContent = img.dataset.brand || img.alt;
+    img.replaceWith(span);
+  }
+  document.querySelectorAll('.logo-row img.brand-logo').forEach(img => {
+    // Already loaded and broken? (naturalWidth === 0 means load failed)
+    if (img.complete && img.naturalWidth === 0) {
+      applyBrandFallback(img);
+      return;
+    }
+    // Otherwise listen for a future error.
+    img.addEventListener('error', () => applyBrandFallback(img), { once: true });
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  const countUp = (el) => {
+    const target = parseFloat(el.textContent.replace(/,/g, ''));
+    const isDecimal = el.textContent.includes('.');
+    const hasComma = el.textContent.includes(',');
+    const duration = 1400;
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = target * eased;
+      let out = isDecimal ? val.toFixed(1) : Math.floor(val).toString();
+      if (hasComma) out = Number(out).toLocaleString();
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const statIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { countUp(e.target); statIO.unobserve(e.target); } });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-n').forEach(el => statIO.observe(el));
+
+  // 6 7 meme bounce — staggered hop on the hero "6 & 7-figure" digits, every 30s.
+  const sixDigit   = document.querySelector('.bounce-six');
+  const sevenDigit = document.querySelector('.bounce-seven');
+  function trigger67() {
+    [sixDigit, sevenDigit].forEach(el => {
+      if (!el) return;
+      el.classList.remove('is-bouncing');
+      // Force reflow so the class can be re-added and animation restarts.
+      void el.offsetWidth;
+      el.classList.add('is-bouncing');
+    });
+    setTimeout(() => {
+      sixDigit?.classList.remove('is-bouncing');
+      sevenDigit?.classList.remove('is-bouncing');
+    }, 1200);
+  }
+  // First bounce shortly after load so visitors actually catch it.
+  setTimeout(trigger67, 3000);
+  setInterval(trigger67, 30000);
+
+  // Recent Work videos: autoplay muted when in view, pause when out. Click button to toggle audio.
+  document.querySelectorAll('.work-card video').forEach(v => {
+    const vidIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.play().catch(() => {});
+        else e.target.pause();
+      });
+    }, { threshold: 0.5 });
+    vidIO.observe(v);
+  });
+  document.querySelectorAll('.work-card .unmute-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const v = btn.parentElement.querySelector('video');
+      // Mute all OTHER videos when one is unmuted, so we don't get a chorus.
+      if (v.muted) {
+        document.querySelectorAll('.work-card video').forEach(other => {
+          if (other !== v) other.muted = true;
+        });
+        document.querySelectorAll('.work-card .unmute-btn').forEach(b => {
+          if (b !== btn) b.classList.remove('live');
+        });
+      }
+      v.muted = !v.muted;
+      btn.classList.toggle('live', !v.muted);
+    });
+  });
+</script>
+
+<!-- TikTok Pixel Code Start -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+  ttq.load('D8GAV63C77UDG683L5N0');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+<!-- TikTok Pixel Code End --><!-- TikTok Pixel Code Start -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+  ttq.load('D8H1VURC77U2SBB675H0');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+<!-- TikTok Pixel Code End --><!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '835528996034860');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=835528996034860&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code --></body>
+</html>
